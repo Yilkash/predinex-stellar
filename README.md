@@ -1,0 +1,121 @@
+# Predinex Stellar
+
+> Next-generation prediction markets on Stellar (via Soroban).
+
+![Status](https://img.shields.io/badge/Status-BETA-blue?style=for-the-badge)
+![Commits](https://img.shields.io/badge/Project_Lifecycle-Initial_Implementation-green?style=for-the-badge)
+ ![Rust](https://img.shields.io/badge/Language-Rust-brown?style=flat-square) ![Soroban](https://img.shields.io/badge/Platform-Soroban-black?style=flat-square) ![License](https://img.shields.io/badge/License-ISC-blue?style=flat-square)
+
+## 🏗 System Architecture
+
+The project centers around the `predinex` Soroban smart contract which manages pool states, betting logic, and fund distribution. It utilizes the Stellar Asset Contract (SAC) for secure token transfers.
+
+```mermaid
+graph TD
+    User[User / Client]
+    
+    subgraph Stellar_Blockchain [Stellar Blockchain]
+        Contract[predinex.wasm]
+        Ledger[Ledger State]
+    end
+    
+    subgraph Storage [Soroban Storage]
+        Pools[Pools Data]
+        UserBets[User Bets Data]
+    end
+
+    User -- "Create Pool" --> Contract
+    User -- "Place Bet (XLM/TKN)" --> Contract
+    User -- "Settle Pool" --> Contract
+    
+    Contract -- Read/Write --> Pools
+    Contract -- Read/Write --> UserBets
+    Contract -- Updates --> Ledger
+```
+
+## 🔄 Workflow
+
+The prediction market lifecycle on Stellar is designed for speed and finality.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Created: create_pool
+    
+    state Created {
+        [*] --> BettingOpen
+        BettingOpen --> BettingOpen: place_bet
+    }
+    
+    Created --> Settled: settle_pool
+    
+    state Settled {
+        [*] --> FundsDistributed
+        note right of FundsDistributed
+          Winner is declared
+          Marked as settled
+        end note
+    }
+    
+    Settled --> [*]
+```
+
+## ✨ Features
+
+- **Decentralized Prediction Pools**: Create and manage binary outcome markets with ease.
+- **Fast Settlements**: Leverages Stellar's 5-second finality for rapid results.
+- **Cross-Asset Betting**: Compatible with any Stellar asset via the Stellar Asset Contract (SAC).
+- **Automated Bookkeeping**: Real-time tracking of pool totals and user positions.
+- **Robust Security**: Built with Rust and Soroban's secure-by-design architecture.
+- **Transparency**: Fully verifiable on-chain data and transaction history.
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- [Rust](https://www.rust-lang.org/)
+- [Stellar CLI](https://developers.stellar.org/docs/build/smart-contracts/getting-started/setup#install-the-stellar-cli)
+- [Node.js](https://nodejs.org/) (v18+)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd predinex-stellar
+   ```
+
+2. **Build the Contract**
+   ```bash
+   cd contracts/predinex
+   stellar contract build
+   ```
+
+3. **Run Tests**
+   ```bash
+   cargo test
+   ```
+
+## 🛣️ Roadmap to Launch
+
+Predinex Stellar follows a phased approach to bring a premium betting experience to the ecosystem.
+
+### Phase 1: Core Soroban Implementation (COMPLETED)
+- ✅ Core contract logic (Pools, Bets, Settlement).
+- ✅ Unit test suite for full lifecycle verification.
+- ✅ Token integration (SAC).
+
+### Phase 2: Frontend Migration (IN PROGRESS)
+- 🔄 Stellar SDK integration.
+- 🔄 Freighter wallet support.
+- ⏳ Real-time market tracking on Stellar.
+
+### Phase 3: Ecosystem & Security (Q3 2026)
+- 📅 Multi-token liquidity pools.
+- 📅 Decentralized Oracle integration.
+- 📅 Governance dashboard for platform parameters.
+
+---
+
+## 📄 License
+
+This project is licensed under the ISC License.

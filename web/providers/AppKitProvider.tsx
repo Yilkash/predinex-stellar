@@ -1,0 +1,26 @@
+'use client';
+
+import { createAppKit } from '@reown/appkit/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactNode } from 'react';
+import { WALLETCONNECT_PROJECT_ID, stacksNetworks, appKitMetadata } from '../lib/appkit-config';
+
+const queryClient = new QueryClient();
+
+// Initialize AppKit
+createAppKit({
+  projectId: WALLETCONNECT_PROJECT_ID,
+  networks: [stacksNetworks.mainnet, stacksNetworks.testnet] as any,
+  metadata: appKitMetadata,
+  features: {
+    analytics: true,
+  }
+});
+
+export function AppKitProvider({ children }: { children: ReactNode }) {
+  return (
+    <QueryClientProvider client={queryClient}>
+      {children}
+    </QueryClientProvider>
+  );
+}
